@@ -1,107 +1,86 @@
-import { useState } from "react";
-import {
-  AiOutlineClose,
-  AiOutlinePlus,
-  AiOutlineAppstoreAdd,
-  AiOutlineCloudUpload,
-} from "react-icons/ai";
+import React, { useState, useEffect } from "react";
+import { Dialog } from "@headlessui/react";
 
-const AddProductModal: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
+interface Category {
+  id?: number;
+  name: string;
+  description: string;
+}
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  header: string;
+  onSave: (category: Category) => void;
+  category: Category | null;
+  
+}
+
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, header, onSave, category }) => {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+
+  useEffect(() => {
+    if (category) {
+      setName(category.name);
+      setDescription(category.description);
+    } else {
+      setName("");
+      setDescription("");
+    }
+  }, [category]);
+
+  const handleSave = () => {
+    onSave({ id: category?.id, name, description });
   };
 
   return (
     <>
-     
-
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-gray-800 w-full max-w-lg rounded-lg shadow-lg relative p-6">
-            {/* Modal Header */}
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                Add New Product
-              </h2>
-              <button
-                onClick={handleCloseModal}
-                className="text-gray-600 dark:text-gray-400 hover:text-red-500"
-              >
-                <AiOutlineClose size={24} />
-              </button>
-            </div>
-
-            {/* Cards Section */}
-            <div className="grid gap-4">
-              {/* Single Product Card */}
-              <div className="border border-gray-300 dark:border-gray-700 rounded-md p-4 flex items-center">
-                <AiOutlinePlus
-                  size={36}
-                
-                />
-                <div>
-                  <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
-                    Create a Single Product
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Create and manage a single product in your inventory.
-                  </p>
-                </div>
-              </div>
-
-              {/* Composite Product Card */}
-              <div className="border border-gray-300 dark:border-gray-700 rounded-md p-4 flex items-center">
-                <AiOutlineAppstoreAdd
-                  size={36}
-                
-                />
-                <div>
-                  <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
-                    Create a Composite Product
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Combine multiple products into a composite product.
-                  </p>
-                </div>
-              </div>
-
-              {/* Bulk Upload Product Card */}
-              <div className="border border-gray-300 dark:border-gray-700 rounded-md p-4 flex items-center">
-                <AiOutlineCloudUpload
-                  size={36}
-                 
-                />
-                <div>
-                  <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
-                    Bulk Upload Products
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Upload multiple products at once using a CSV file.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Cancel Button */}
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={handleCloseModal}
-                className="border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                Cancel
-              </button>
-            </div>
+      {/* RGB Overlay */}
+      {isOpen && <div className="fixed inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-30 z-40"></div>}
+      <Dialog open={isOpen} onClose={onClose} className="fixed inset-0 flex items-center justify-center p-4 z-50">
+        <Dialog.Panel className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg p-6 w-full max-w-md modal-animation">
+          <Dialog.Title as="h3" className="text-xl font-semibold mb-4">
+            {header}
+          </Dialog.Title>
+          <div>
+            <label className="text-gray-600 dark:text-gray-400 mb-1 block">Category Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full"
+              placeholder="Enter category name"
+            />
           </div>
-        </div>
-      )}
+          <div className="mt-4">
+            <label className="text-gray-600 dark:text-gray-400 mb-1 block">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full"
+              placeholder="Enter category description"
+            />
+          </div>
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={onClose}
+              className="bg-gray-500 text-white px-3 py-2 rounded-md hover:bg-gray-600 mr-2"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              className="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600"
+            >
+              Save
+            </button>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
     </>
   );
 };
 
-export default AddProductModal;
+export default Modal;

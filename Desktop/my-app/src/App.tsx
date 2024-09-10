@@ -11,6 +11,10 @@ import ReconciliationsPage from './pages/inventory/products/reconciliations.prod
 import RestockProductsPage from './pages/inventory/products/restock.products';
 import AddSingleProductPage from './pages/inventory/products/addSingle.products';
 import ProductAnalysisPage from './pages/inventory/analysis/analysis.inventory';
+import CategoriesPage from './pages/inventory/categories/products.categories';
+import StoresPage from './pages/inventory/stores/stores.inventory';
+import SuppliersPage from './pages/inventory/suppliers/inventory.suppliers';
+import SupplierDetailPage from './pages/inventory/suppliers/suppliers.details';
 
 
 const App: React.FC = (any) => {
@@ -32,6 +36,14 @@ const App: React.FC = (any) => {
           <Route path='/product/add/single' element = {<AddSingleProductPage/>}/>
           <Route path='/inventory/analytics' element = {<ProductAnalysisPage/>}/>
           <Route path='/inventory/analytics/details' element = {<ProductAnalysisPage/>}/>
+          <Route path='/inventory/categories' element = {<CategoriesPage/>}/>
+          <Route path='/inventory/stores' element = {<StoresPage/>}/>
+          <Route path='/inventory/suppliers' element = {<SuppliersPage/>}/>
+          <Route path='suppliers/details' element = {<SupplierDetailPage/>}/>
+
+
+
+
 
 
 

@@ -49,7 +49,7 @@ const ProductsPage: React.FC = () => {
         <div className="flex-1 flex flex-col">
           {/* Header */}
           <Header />
-          <AddProductModal />   
+          {/* <AddProductModal />    */}
           {/* Main content */}
           <main className="flex-1 p-4 overflow-y-auto">
             <div className="flex justify-between mb-4">
