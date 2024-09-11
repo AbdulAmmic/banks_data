@@ -40,7 +40,7 @@ const ReturnsPage: React.FC = () => {
   const products = [
     { id: "1", name: "Product 1", category: "Category A", quantity: 100 },
     { id: "2", name: "Product 2", category: "Category B", quantity: 50 },
-    // Add more products as needed
+    
   ];
 
   const filteredProducts = products.filter(
@@ -84,7 +84,9 @@ const ReturnsPage: React.FC = () => {
             </button>
           </div>
 
-          {/* Products Search and Select */}
+          
+
+      
           <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-4 w-full">
             <div className="flex justify-between mb-4">
               <input
