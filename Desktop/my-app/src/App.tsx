@@ -17,6 +17,8 @@ import SuppliersPage from './pages/inventory/suppliers/inventory.suppliers';
 import SupplierDetailPage from './pages/inventory/suppliers/suppliers.details';
 import NewSupplyPage from './pages/inventory/suppliers/new.supply';
 import Expenses from './pages/expenses/expenses';
+import Customers from './pages/customers/customers';
+import PaymentsPage from './pages/payments/payments';
 
 
 const App: React.FC = (any) => {
@@ -44,6 +46,10 @@ const App: React.FC = (any) => {
           <Route path='suppliers/details' element = {<SupplierDetailPage/>}/>
           <Route path='suppliers/new' element = {<NewSupplyPage/>}/>
           <Route path='/expenses' element = {<Expenses/>}/>
+          <Route path='/customers' element = {<Customers/>}/>
+          <Route path='/payments' element = {<PaymentsPage/>}/>
+
+
 
 
 

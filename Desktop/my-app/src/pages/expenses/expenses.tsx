@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../components/sidenav";
 import Header from "../../components/header";
 import { AiOutlinePlus, AiOutlineDelete } from "react-icons/ai";
@@ -6,7 +6,10 @@ import { BiEdit } from "react-icons/bi";
 
 type Expense = {
   id: number;
+  store: string;
   description: string;
+  paymentMethod: string;
+  expenseName: string;
   amount: string;
   date: string;
   category: string;
@@ -14,13 +17,45 @@ type Expense = {
 
 const Expenses: React.FC = () => {
   const [expenses, setExpenses] = useState<Expense[]>([
-    { id: 1, description: "Office Supplies", amount: "$120.00", date: "2024-09-10", category: "General" },
+    {
+      id: 1,
+      store: "Main Store",
+      description: "Office Supplies",
+      paymentMethod: "Credit Card",
+      expenseName: "Supplies",
+      amount: "$120.00",
+      date: "2024-09-10",
+      category: "Expenses",
+    },
   ]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("date");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentExpense, setCurrentExpense] = useState<Expense | null>(null);
+  const [newCategory, setNewCategory] = useState("");
+
+  // Ref for modal content
+  const modalRef = useRef<HTMLDivElement | null>(null);
+
+  // Effect to handle clicks outside the modal
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        closeModal();
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isModalOpen]);
 
   // Open modal for adding/editing
   const openModal = (expense: Expense | null = null) => {
@@ -43,21 +78,25 @@ const Expenses: React.FC = () => {
   // Add or edit expense
   const handleSaveExpense = (e: React.FormEvent) => {
     e.preventDefault();
+    const form = e.target as HTMLFormElement;
+
+    const expenseData: Expense = {
+      id: currentExpense ? currentExpense.id : expenses.length + 1,
+      store: form.store.value, // Store is no longer used
+      description: form.description.value,
+      paymentMethod: form.paymentMethod.value,
+      expenseName: form.expenseName.value,
+      amount: form.amount.value,
+      date: form.date.value,
+      category: form.category.value || newCategory,
+    };
+
     if (currentExpense) {
       setExpenses((prevExpenses) =>
-        prevExpenses.map((exp) =>
-          exp.id === currentExpense.id ? currentExpense : exp
-        )
+        prevExpenses.map((exp) => (exp.id === currentExpense.id ? expenseData : exp))
       );
     } else {
-      const newExpense: Expense = {
-        id: expenses.length + 1,
-        description: (e.target as any).description.value,
-        amount: (e.target as any).amount.value,
-        date: (e.target as any).date.value,
-        category: (e.target as any).category.value,
-      };
-      setExpenses([...expenses, newExpense]);
+      setExpenses([...expenses, expenseData]);
     }
     closeModal();
   };
@@ -97,7 +136,7 @@ const Expenses: React.FC = () => {
               onClick={() => openModal()}
               className="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
             >
-              <AiOutlinePlus size={20}/>
+              <AiOutlinePlus size={20} />
               Add Expense
             </button>
           </div>
@@ -126,7 +165,10 @@ const Expenses: React.FC = () => {
             <table className="min-w-full table-auto">
               <thead>
                 <tr className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-sm leading-normal">
+                  <th className="py-3 px-6 text-left">Store</th>
                   <th className="py-3 px-6 text-left">Description</th>
+                  <th className="py-3 px-6 text-left">Payment Method</th>
+                  <th className="py-3 px-6 text-left">Expense Name</th>
                   <th className="py-3 px-6 text-left">Amount</th>
                   <th className="py-3 px-6 text-left">Date</th>
                   <th className="py-3 px-6 text-left">Category</th>
@@ -139,9 +181,10 @@ const Expenses: React.FC = () => {
                     key={expense.id}
                     className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
-                    <td className="py-3 px-6 text-left whitespace-nowrap">
-                      {expense.description}
-                    </td>
+                    <td className="py-3 px-6 text-left">{expense.store}</td>
+                    <td className="py-3 px-6 text-left">{expense.description}</td>
+                    <td className="py-3 px-6 text-left">{expense.paymentMethod}</td>
+                    <td className="py-3 px-6 text-left">{expense.expenseName}</td>
                     <td className="py-3 px-6 text-left">{expense.amount}</td>
                     <td className="py-3 px-6 text-left">{expense.date}</td>
                     <td className="py-3 px-6 text-left">{expense.category}</td>
@@ -170,11 +213,28 @@ const Expenses: React.FC = () => {
           {/* Modal for Add/Edit Expense */}
           {isModalOpen && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-lg">
-                <h2 className="text-xl font-semibold mb-4">
+              <div
+                ref={modalRef}
+                className="bg-white dark:bg-gray-800 p-4 rounded-lg w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
+              >
+                <h2 className="text-lg font-semibold mb-4">
                   {isEditing ? "Edit Expense" : "Add Expense"}
                 </h2>
                 <form onSubmit={handleSaveExpense}>
+                  {/* Expense Name Field */}
+                  <div className="mb-4">
+                    <label className="block text-gray-700 dark:text-gray-300">
+                      Expense Name
+                    </label>
+                    <input
+                      type="text"
+                      name="expenseName"
+                      defaultValue={currentExpense?.expenseName || ""}
+                      className="border rounded p-2 w-full"
+                      required
+                    />
+                  </div>
+                  {/* Description Field */}
                   <div className="mb-4">
                     <label className="block text-gray-700 dark:text-gray-300">
                       Description
@@ -183,11 +243,24 @@ const Expenses: React.FC = () => {
                       type="text"
                       name="description"
                       defaultValue={currentExpense?.description || ""}
+                      className="border rounded p-2 w-full"
                       required
-                      className="border rounded w-full p-2 mt-2"
                     />
                   </div>
-
+                  {/* Payment Method Field */}
+                  <div className="mb-4">
+                    <label className="block text-gray-700 dark:text-gray-300">
+                      Payment Method
+                    </label>
+                    <input
+                      type="text"
+                      name="paymentMethod"
+                      defaultValue={currentExpense?.paymentMethod || ""}
+                      className="border rounded p-2 w-full"
+                      required
+                    />
+                  </div>
+                  {/* Amount Field */}
                   <div className="mb-4">
                     <label className="block text-gray-700 dark:text-gray-300">
                       Amount
@@ -196,11 +269,11 @@ const Expenses: React.FC = () => {
                       type="text"
                       name="amount"
                       defaultValue={currentExpense?.amount || ""}
+                      className="border rounded p-2 w-full"
                       required
-                      className="border rounded w-full p-2 mt-2"
                     />
                   </div>
-
+                  {/* Date Field */}
                   <div className="mb-4">
                     <label className="block text-gray-700 dark:text-gray-300">
                       Date
@@ -209,11 +282,11 @@ const Expenses: React.FC = () => {
                       type="date"
                       name="date"
                       defaultValue={currentExpense?.date || ""}
+                      className="border rounded p-2 w-full"
                       required
-                      className="border rounded w-full p-2 mt-2"
                     />
                   </div>
-
+                  {/* Category Field */}
                   <div className="mb-4">
                     <label className="block text-gray-700 dark:text-gray-300">
                       Category
@@ -222,24 +295,23 @@ const Expenses: React.FC = () => {
                       type="text"
                       name="category"
                       defaultValue={currentExpense?.category || ""}
-                      required
-                      className="border rounded w-full p-2 mt-2"
+                      className="border rounded p-2 w-full"
                     />
                   </div>
-
-                  <div className="flex justify-end">
+                  {/* Submit Button */}
+                  <div className="flex justify-between">
+                    <button
+                      type="submit"
+                      className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                      {isEditing ? "Save Changes" : "Add Expense"}
+                    </button>
                     <button
                       type="button"
                       onClick={closeModal}
-                      className="mr-4 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded"
+                      className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
                     >
                       Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-                    >
-                      {isEditing ? "Update" : "Add"}
                     </button>
                   </div>
                 </form>
