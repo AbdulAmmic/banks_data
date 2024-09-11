@@ -22,7 +22,7 @@ const Sidenav: React.FC<SidenavProps> = ({
     <>
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black transition-opacity duration-300 ease-in-out z-40 ${
+        className={`fixed inset-0 bg-black transition-opacity duration-300 ease-in-out z-40 N {
           isOpen ? "opacity-50 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
@@ -30,7 +30,7 @@ const Sidenav: React.FC<SidenavProps> = ({
 
       {/* Sidenav */}
       <div
-        className={`fixed top-0 right-0 h-full bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out z-50 ${
+        className={`fixed top-0 right-0 h-full bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 ease-in-out z-50 N {
           isOpen ? "translate-x-0" : "translate-x-full"
         } w-80`}
       >

@@ -10,8 +10,8 @@ const ProductAnalysisPage: React.FC = () => {
   const [isSidenavOpen, setIsSidenavOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState([
-    { id: 1, name: "Product A", grossSales: "$10,000", netProfit: "$2,500", unitsSold: 500, stockLevel: 200 },
-    { id: 2, name: "Product B", grossSales: "$8,000", netProfit: "$1,800", unitsSold: 400, stockLevel: 300 },
+    { id: 1, name: "Product A", grossSales: "N 10,000", netProfit: "N 2,500", unitsSold: 500, stockLevel: 200 },
+    { id: 2, name: "Product B", grossSales: "N 8,000", netProfit: "N 1,800", unitsSold: 400, stockLevel: 300 },
     // Add more products as needed
   ]);
 
@@ -128,7 +128,7 @@ const ProductAnalysisPage: React.FC = () => {
                     <td className="py-3 px-6">{product.stockLevel}</td>
                     <td className="py-3 px-6">
                       <button
-                        onClick={() => navigate(`/products/${product.id}/analysis`)}
+                        onClick={() => navigate(`/products/N {product.id}/analysis`)}
                         className="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600"
                       >
                         View Full Analysis
@@ -183,3 +183,4 @@ const ProductAnalysisPage: React.FC = () => {
 };
 
 export default ProductAnalysisPage;
+    

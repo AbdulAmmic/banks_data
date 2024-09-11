@@ -124,7 +124,7 @@ const CategoriesPage = () => {
                   <tr key={category.id} className="border-b dark:border-gray-600">
                     <td className="p-2">{category.name}</td>
                     <td className="p-2">{category.description}</td>
-                    <td className="p-2">${category.profit.toFixed(2)}</td>
+                    <td className="p-2">N {category.profit.toFixed(2)}</td>
                     <td className="p-2">{category.unitsSold}</td>
                     <td className="p-2">{category.numberOfProducts}</td>
                     <td className="p-2 text-right">

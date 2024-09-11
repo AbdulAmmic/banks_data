@@ -23,7 +23,7 @@ const Expenses: React.FC = () => {
       description: "Office Supplies",
       paymentMethod: "Credit Card",
       expenseName: "Supplies",
-      amount: "$120.00",
+      amount: "N 120.00",
       date: "2024-09-10",
       category: "Expenses",
     },

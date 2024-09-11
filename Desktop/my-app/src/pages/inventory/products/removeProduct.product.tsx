@@ -82,7 +82,7 @@ const RemoveProductsPage: React.FC = () => {
             {/* Remove Button */}
             <button
               onClick={handleOpenSidenav}
-              className={`${
+              className={`N {
                 selectedProducts.length === 0
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-red-500 hover:bg-red-600"

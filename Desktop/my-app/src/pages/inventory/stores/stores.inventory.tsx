@@ -105,7 +105,7 @@ const StoresPage = () => {
                   <tr key={store.id} className="border-b dark:border-gray-600">
                     <td className="p-2">{store.name}</td>
                     <td className="p-2">{store.location}</td>
-                    <td className="p-2">${store.revenue.toFixed(2)}</td>
+                    <td className="p-2">N {store.revenue.toFixed(2)}</td>
                     <td className="p-2">{store.employees}</td>
                     <td className="p-2">{store.numberOfProducts}</td>
                     <td className="p-2 text-right">

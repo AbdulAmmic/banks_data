@@ -64,7 +64,7 @@ const CreateSingleProductPage: React.FC = () => {
             <div className="flex space-x-4">
               <button
                 onClick={() => setProductType("product")}
-                className={`flex-1 py-2 rounded-md border border-blue-500 ${
+                className={`flex-1 py-2 rounded-md border border-blue-500 N {
                   productType === "product" ? "bg-blue-500 text-white" : "text-blue-500"
                 }`}
               >
@@ -72,7 +72,7 @@ const CreateSingleProductPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setProductType("service")}
-                className={`flex-1 py-2 rounded-md border border-blue-500 ${
+                className={`flex-1 py-2 rounded-md border border-blue-500 N {
                   productType === "service" ? "bg-blue-500 text-white" : "text-blue-500"
                 }`}
               >
