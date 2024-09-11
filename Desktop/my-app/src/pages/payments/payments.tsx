@@ -4,10 +4,20 @@ import Sidebar from "../../components/sidenav";
 import Header from "../../components/header";
 import Sidenav from "../../components/sidePush";
 
-const paymentsData = [
-  { id: 1, date: "2024-09-10", amount: 500, method: "Credit Card", type: "Received", description: "" },
+type Payment = {
+  id: number;
+  date: string;
+  amount: number;
+  method: string;
+  type: "Received" | "Transferred";
+  to?: string;
+  description?: string;
+};
+
+const initialPayments: Payment[] = [
+  { id: 1, date: "2024-09-10", amount: 500, method: "Credit Card", type: "Received" },
   { id: 2, date: "2024-09-11", amount: 300, method: "Bank Transfer", type: "Transferred", to: "John Doe", description: "Fund Transfer" },
-  { id: 3, date: "2024-09-12", amount: 200, method: "Cash", type: "Received", description: "" },
+  { id: 3, date: "2024-09-12", amount: 200, method: "Cash", type: "Received" },
   { id: 4, date: "2024-09-13", amount: 400, method: "Credit Card", type: "Transferred", to: "Jane Smith", description: "Payment for services" },
 ];
 
@@ -15,25 +25,83 @@ const PaymentsPage: React.FC = () => {
   const [isSidenavOpen, setIsSidenavOpen] = useState(false);
   const [isReceivePaymentsOpen, setIsReceivePaymentsOpen] = useState(false);
   const [isTransferFundsOpen, setIsTransferFundsOpen] = useState(false);
-  const [sortType, setSortType] = useState("");
+  const [paymentsData, setPaymentsData] = useState<Payment[]>(initialPayments);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [newPaymentId, setNewPaymentId] = useState(initialPayments.length + 1); // Keep track of new IDs
+  const [sortConfig, setSortConfig] = useState<{ key: keyof Payment; direction: "asc" | "desc" }>({
+    key: "date",
+    direction: "asc",
+  });
 
+  // Sidenav handlers
   const handleOpenSidenav = () => setIsSidenavOpen(true);
   const handleCloseSidenav = () => setIsSidenavOpen(false);
-
   const handleOpenReceivePayments = () => setIsReceivePaymentsOpen(true);
   const handleCloseReceivePayments = () => setIsReceivePaymentsOpen(false);
-
   const handleOpenTransferFunds = () => setIsTransferFundsOpen(true);
   const handleCloseTransferFunds = () => setIsTransferFundsOpen(false);
 
-  const handleSort = (sortBy: string) => {
-    setSortType(sortBy);
+  // Function to add a received payment
+  const addReceivedPayment = (customerName: string, paymentMethod: string, amount: number) => {
+    const newPayment: Payment = {
+      id: newPaymentId,
+      date: new Date().toISOString().slice(0, 10),
+      amount,
+      method: paymentMethod,
+      type: "Received",
+    };
+    setPaymentsData([...paymentsData, newPayment]);
+    setNewPaymentId(newPaymentId + 1);
+    handleCloseReceivePayments();
   };
 
-  // Filter payments based on sorting type
-  const filteredPayments = sortType
-    ? paymentsData.filter((payment) => payment.type === sortType)
-    : paymentsData;
+  // Function to add a transfer
+  const addTransferFunds = (recipient: string, description: string, amount: number) => {
+    const newPayment: Payment = {
+      id: newPaymentId,
+      date: new Date().toISOString().slice(0, 10),
+      amount,
+      method: "Transfer",
+      type: "Transferred",
+      to: recipient,
+      description,
+    };
+    setPaymentsData([...paymentsData, newPayment]);
+    setNewPaymentId(newPaymentId + 1);
+    handleCloseTransferFunds();
+  };
+
+  // Sorting function
+  const sortedPayments = [...paymentsData].sort((a, b) => {
+    const aValue = a[sortConfig.key as keyof Payment];
+    const bValue = b[sortConfig.key as keyof Payment];
+  
+    if (aValue === undefined || bValue === undefined) {
+      return 0; // If either value is undefined, do not sort
+    }
+  
+    if (aValue < bValue) {
+      return sortConfig.direction === "asc" ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return sortConfig.direction === "asc" ? 1 : -1;
+    }
+    return 0;
+  });
+  
+
+  // Search functionality
+  const filteredPayments = sortedPayments.filter((payment) =>
+    payment.date.includes(searchTerm) ||
+    payment.method.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (payment.to && payment.to.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    payment.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleSort = (key: keyof Payment) => {
+    const direction = sortConfig.key === key && sortConfig.direction === "asc" ? "desc" : "asc";
+    setSortConfig({ key, direction });
+  };
 
   return (
     <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
@@ -42,23 +110,18 @@ const PaymentsPage: React.FC = () => {
         <Header />
         <main className="flex-1 p-4 overflow-y-auto">
           <div className="flex justify-between mb-4">
-            {/* Receive Payments Button */}
             <button
               onClick={handleOpenReceivePayments}
               className="bg-green-500 text-white px-3 py-2 rounded-md hover:bg-green-600 flex items-center"
             >
               <AiOutlineSwap /> Receive Payments
             </button>
-
-            {/* Transfer Funds Button */}
             <button
               onClick={handleOpenTransferFunds}
               className="bg-amber-500 text-white px-3 py-2 rounded-md hover:bg-amber-600 flex items-center"
             >
               Transfer Funds
             </button>
-
-            {/* Export Payments Button */}
             <button
               title="Export Payments"
               onClick={handleOpenSidenav}
@@ -68,50 +131,43 @@ const PaymentsPage: React.FC = () => {
             </button>
           </div>
 
-          {/* Cards Section */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-            {/* Cards for Summary */}
-            <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-4 flex items-center justify-between">
-              <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Available Balance</h3>
-              <button className="border border-blue-500 text-blue-500 px-2 py-1 rounded-md hover:bg-blue-50">Refresh</button>
-            </div>
-            <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-4 flex items-center justify-between">
-              <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Revenue Summary</h3>
-            </div>
-            <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-4 flex items-center justify-between">
-              <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Today's Income</h3>
-            </div>
-          </div>
-
           {/* Payments Table */}
           <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-4 w-full">
             <div className="flex justify-between mb-4">
               <input
                 type="text"
                 placeholder="Search Payments"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="border border-blue-300 dark:border-gray-600 rounded-md px-3 py-2 w-full max-w-xs"
               />
-              <select
-                onChange={(e) => handleSort(e.target.value)}
-                className="border border-blue-300 dark:border-gray-600 rounded-md px-3 py-2 ml-2"
-              >
-                <option value="">Sort By</option>
-                <option value="Received">Received</option>
-                <option value="Transferred">Transferred</option>
-              </select>
             </div>
 
             <div className="overflow-x-auto">
               <table className="min-w-full text-left text-sm text-gray-600 dark:text-gray-200">
                 <thead className="bg-gray-200 dark:bg-gray-700">
                   <tr>
-                    <th className="py-3 px-6 font-medium">S/N</th>
-                    <th className="py-3 px-6 font-medium">Date</th>
-                    <th className="py-3 px-6 font-medium">Amount</th>
-                    <th className="py-3 px-6 font-medium">Method</th>
-                    <th className="py-3 px-6 font-medium">Type</th>
-                    <th className="py-3 px-6 font-medium">To</th>
-                    <th className="py-3 px-6 font-medium">Description</th>
+                    <th className="py-3 px-6 font-medium cursor-pointer" onClick={() => handleSort("id")}>
+                      S/N {sortConfig.key === "id" && (sortConfig.direction === "asc" ? "▲" : "▼")}
+                    </th>
+                    <th className="py-3 px-6 font-medium cursor-pointer" onClick={() => handleSort("date")}>
+                      Date {sortConfig.key === "date" && (sortConfig.direction === "asc" ? "▲" : "▼")}
+                    </th>
+                    <th className="py-3 px-6 font-medium cursor-pointer" onClick={() => handleSort("amount")}>
+                      Amount {sortConfig.key === "amount" && (sortConfig.direction === "asc" ? "▲" : "▼")}
+                    </th>
+                    <th className="py-3 px-6 font-medium cursor-pointer" onClick={() => handleSort("method")}>
+                      Method {sortConfig.key === "method" && (sortConfig.direction === "asc" ? "▲" : "▼")}
+                    </th>
+                    <th className="py-3 px-6 font-medium cursor-pointer" onClick={() => handleSort("type")}>
+                      Type {sortConfig.key === "type" && (sortConfig.direction === "asc" ? "▲" : "▼")}
+                    </th>
+                    <th className="py-3 px-6 font-medium cursor-pointer" onClick={() => handleSort("to")}>
+                      To {sortConfig.key === "to" && (sortConfig.direction === "asc" ? "▲" : "▼")}
+                    </th>
+                    <th className="py-3 px-6 font-medium cursor-pointer" onClick={() => handleSort("description")}>
+                      Description {sortConfig.key === "description" && (sortConfig.direction === "asc" ? "▲" : "▼")}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -132,10 +188,7 @@ const PaymentsPage: React.FC = () => {
                     ))
                   ) : (
                     <tr>
-                      <td
-                        colSpan={7}
-                        className="py-3 px-6 text-center text-gray-500 dark:text-gray-400"
-                      >
+                      <td colSpan={7} className="py-3 px-6 text-center">
                         No payments found
                       </td>
                     </tr>
@@ -144,95 +197,84 @@ const PaymentsPage: React.FC = () => {
               </table>
             </div>
           </div>
+
+          {/* Sidenav for Receive Payments */}
+          <Sidenav
+            isOpen={isReceivePaymentsOpen}
+            onClose={handleCloseReceivePayments}
+            header="Receive Payments"
+            description="Record received payments"
+            inputs={
+              <>
+                <label className="text-gray-600 dark:text-gray-400 mb-1 block">Customer Name</label>
+                <input
+                  type="text"
+                  className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full"
+                  placeholder="Enter customer name"
+                  id="customerName"
+                />
+                <label className="text-gray-600 dark:text-gray-400 mb-1 block">Payment Method</label>
+                <input
+                  type="text"
+                  className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full"
+                  placeholder="Enter payment method"
+                  id="paymentMethod"
+                />
+                <label className="text-gray-600 dark:text-gray-400 mb-1 block">Amount</label>
+                <input
+                  type="number"
+                  className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full"
+                  placeholder="Enter amount"
+                  id="paymentAmount"
+                />
+              </>
+            }
+            button={<button onClick={() => addReceivedPayment(
+              (document.getElementById("customerName") as HTMLInputElement).value,
+              (document.getElementById("paymentMethod") as HTMLInputElement).value,
+              parseFloat((document.getElementById("paymentAmount") as HTMLInputElement).value)
+            )} className="bg-green-500 text-white px-3 py-2 rounded-md hover:bg-green-600">Receive</button>}
+          />
+
+          {/* Sidenav for Transfer Funds */}
+          <Sidenav
+            isOpen={isTransferFundsOpen}
+            onClose={handleCloseTransferFunds}
+            header="Transfer Funds"
+            description="Transfer funds from one store to another"
+            inputs={
+              <>
+                <label className="text-gray-600 dark:text-gray-400 mb-1 block">To</label>
+                <input
+                  type="text"
+                  className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full"
+                  placeholder="Enter recipient name"
+                  id="transferRecipient"
+                />
+                <label className="text-gray-600 dark:text-gray-400 mb-1 block">Description</label>
+                <input
+                  type="text"
+                  className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full"
+                  placeholder="Enter description"
+                  id="transferDescription"
+                />
+                <label className="text-gray-600 dark:text-gray-400 mb-1 block">Amount</label>
+                <input
+                  type="number"
+                  className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full"
+                  placeholder="Enter amount"
+                  id="transferAmount"
+                />
+              </>
+            }
+            button={<button onClick={() => addTransferFunds(
+              (document.getElementById("transferRecipient") as HTMLInputElement).value,
+              (document.getElementById("transferDescription") as HTMLInputElement).value,
+              parseFloat((document.getElementById("transferAmount") as HTMLInputElement).value)
+            )} className="bg-amber-500 text-white px-3 py-2 rounded-md hover:bg-amber-600">Transfer</button>}
+          />
         </main>
       </div>
-
-      {/* Sidenav for Export Payments */}
-      <Sidenav
-        isOpen={isSidenavOpen}
-        onClose={handleCloseSidenav}
-        header="Payments Export"
-        description="Export your payments from multiple stores in PDF or Excel"
-        inputs={
-          <>
-            <label className="text-gray-600 dark:text-gray-400 mb-1 block">Select Store</label>
-            <select className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full">
-              <option value="">Select...</option>
-              <option value="store1">Store 1</option>
-              <option value="store2">Store 2</option>
-            </select>
-            <label className="text-gray-600 dark:text-gray-400 mb-1 block">Select preferred file type</label>
-            <select className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full">
-              <option value="excel">Excel</option>
-              <option value="pdf">PDF</option>
-            </select>
-          </>
-        }
-        button={<button className="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600">Export</button>}
-      />
-
-      {/* Sidenav for Receive Payments */}
-      <Sidenav
-        isOpen={isReceivePaymentsOpen}
-        onClose={handleCloseReceivePayments}
-        header="Receive Payments"
-        description="Record new payments received from customers"
-        inputs={
-          <>
-            <label className="text-gray-600 dark:text-gray-400 mb-1 block">Customer Name</label>
-            <input
-              type="text"
-              className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full"
-              placeholder="Enter customer name"
-            />
-            <label className="text-gray-600 dark:text-gray-400 mb-1 block">Payment Method</label>
-            <select className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full">
-              <option value="">Select...</option>
-              <option value="credit">Credit Card</option>
-              <option value="bank">Bank Transfer</option>
-              <option value="cash">Cash</option>
-            </select>
-            <label className="text-gray-600 dark:text-gray-400 mb-1 block">Amount</label>
-            <input
-              type="number"
-              className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full"
-              placeholder="Enter amount"
-            />
-          </>
-        }
-        button={<button className="bg-green-500 text-white px-3 py-2 rounded-md hover:bg-green-600">Receive</button>}
-      />
-
-      {/* Sidenav for Transfer Funds */}
-      <Sidenav
-        isOpen={isTransferFundsOpen}
-        onClose={handleCloseTransferFunds}
-        header="Transfer Funds"
-        description="Transfer funds from one store to another"
-        inputs={
-          <>
-            <label className="text-gray-600 dark:text-gray-400 mb-1 block">To</label>
-            <input
-              type="text"
-              className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full"
-              placeholder="Enter recipient name"
-            />
-            <label className="text-gray-600 dark:text-gray-400 mb-1 block">Description</label>
-            <input
-              type="text"
-              className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full"
-              placeholder="Enter description"
-            />
-            <label className="text-gray-600 dark:text-gray-400 mb-1 block">Amount</label>
-            <input
-              type="number"
-              className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 w-full"
-              placeholder="Enter amount"
-            />
-          </>
-        }
-        button={<button className="bg-amber-500 text-white px-3 py-2 rounded-md hover:bg-amber-600">Transfer</button>}
-      />
     </div>
   );
 };

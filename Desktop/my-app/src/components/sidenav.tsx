@@ -58,9 +58,9 @@ const Sidebar: React.FC = () => {
           </Link>
 
           {/* Chat */}
-          <Link to="/chat" className={`flex flex-col items-center mb-4 cursor-pointer ${location.pathname === '/chat' ? 'bg-white text-blue-700' : 'text-blue-200'}`}>
+          <Link to="/message" className={`flex flex-col items-center mb-4 cursor-pointer ${location.pathname === '/chat' ? 'bg-white text-blue-700' : 'text-blue-200'}`}>
             <AiOutlineMessage size={15} />
-            <span className="text-xs mt-1">Chat</span>
+            <span className="text-xs mt-1">Message</span>
           </Link>
 
           {/* Settings */}
@@ -99,12 +99,12 @@ const Sidebar: React.FC = () => {
         </Link>
 
         {/* Chat */}
-        <Link to="/chat" className={`flex flex-col items-center p-2 ${location.pathname === '/chat' ? 'bg-white text-blue-700' : 'text-blue-200'}`}>
+        <Link to="/chat" className={`flex flex-col items-center p-2 ${location.pathname === '/chat' ? ' text-blue-700' : 'text-blue-200'}`}>
           <AiOutlineMessage size={15} />
         </Link>
 
         {/* Settings */}
-        <Link to="/settings" className={`flex flex-col items-center p-2 ${location.pathname === '/settings' ? 'bg-white text-blue-700' : 'text-blue-200'}`}>
+        <Link to="/settings" className={`flex flex-col items-center p-2 ${location.pathname === '/settings' ? ' text-blue-700' : 'text-blue-200'}`}>
           <AiOutlineSetting size={15} />
         </Link>
       </div>
