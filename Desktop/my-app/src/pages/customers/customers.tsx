@@ -17,7 +17,7 @@ const Customers: React.FC = () => {
     {
       id: 1,
       name: "John Doe",
-      walletBalance: "N 500.00",
+      walletBalance: "$500.00",
       address: "123 Main St",
       phoneNumber: "+1234567890",
     },

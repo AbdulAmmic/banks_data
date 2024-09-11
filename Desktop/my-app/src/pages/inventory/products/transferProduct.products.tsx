@@ -73,7 +73,7 @@ const TransferProductsPage: React.FC = () => {
             {/* Transfer Button */}
             <button
               onClick={handleOpenSidenav}
-              className={`N {
+              className={`${
                 selectedProducts.length === 0
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-500 hover:bg-green-600"

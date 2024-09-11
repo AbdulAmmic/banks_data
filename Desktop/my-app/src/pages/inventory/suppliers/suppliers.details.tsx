@@ -62,11 +62,11 @@ const SupplierDetailPage = () => {
                   </div>
                   <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
                     <h3 className="text-lg font-medium mb-2">Total Bill Settled</h3>
-                    <p className="text-2xl font-bold">N {supplier.totalBillSettled.toLocaleString()}</p>
+                    <p className="text-2xl font-bold">${supplier.totalBillSettled.toLocaleString()}</p>
                   </div>
                   <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
                     <h3 className="text-lg font-medium mb-2">Total Bill Unsettled</h3>
-                    <p className="text-2xl font-bold">N {supplier.totalBillUnsettled.toLocaleString()}</p>
+                    <p className="text-2xl font-bold">${supplier.totalBillUnsettled.toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -110,8 +110,8 @@ const SupplierDetailPage = () => {
                         <td className="p-2">{history.description}</td>
                         <td className="p-2">{history.location}</td>
                         <td className="p-2">{history.productsCollected.toLocaleString()}</td>
-                        <td className="p-2">N {history.debtSettled.toLocaleString()}</td>
-                        <td className="p-2">N {history.billUnsettled.toLocaleString()}</td>
+                        <td className="p-2">${history.debtSettled.toLocaleString()}</td>
+                        <td className="p-2">${history.billUnsettled.toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>

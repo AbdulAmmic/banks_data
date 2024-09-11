@@ -7,7 +7,7 @@ import Datepicker from "react-tailwindcss-datepicker";
 type DashboardProps = React.PropsWithChildren<{}>;
 
 const Dashboard: React.FC<DashboardProps> = ({ children }) => {
-  // State to manage dropdown visibility
+ 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isShopsDropdownOpen, setIsShopsDropdownOpen] = useState(false);
   const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
@@ -70,7 +70,7 @@ const Dashboard: React.FC<DashboardProps> = ({ children }) => {
         <main className="flex-1 p-4 overflow-y-auto">
           {/* Welcome Message */}
           <h1 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
-            Welcome Pharm. Abdurrahman,
+            Welcome To the Dashboard
           </h1>
 
           {/* Quick Actions Section */}

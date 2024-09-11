@@ -179,7 +179,7 @@ const PaymentsPage: React.FC = () => {
                       >
                         <td className="py-3 px-6">{index + 1}</td>
                         <td className="py-3 px-6">{payment.date}</td>
-                        <td className="py-3 px-6">N {payment.amount}</td>
+                        <td className="py-3 px-6">${payment.amount}</td>
                         <td className="py-3 px-6">{payment.method}</td>
                         <td className="py-3 px-6">{payment.type}</td>
                         <td className="py-3 px-6">{payment.to || "N/A"}</td>
