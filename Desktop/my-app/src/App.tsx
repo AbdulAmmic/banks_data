@@ -19,6 +19,8 @@ import NewSupplyPage from './pages/inventory/suppliers/new.supply';
 import Expenses from './pages/expenses/expenses';
 import Customers from './pages/customers/customers';
 import PaymentsPage from './pages/payments/payments';
+import SalesMode from './pages/inventory/salemode/home';
+import CheckoutPage from './pages/inventory/salemode/checkout';
 
 
 const App: React.FC = (any) => {
@@ -48,6 +50,12 @@ const App: React.FC = (any) => {
           <Route path='/expenses' element = {<Expenses/>}/>
           <Route path='/customers' element = {<Customers/>}/>
           <Route path='/payments' element = {<PaymentsPage/>}/>
+          <Route path='/sell_mode' element = {<SalesMode/>}/>
+          <Route path='/sell_mode/checkout' element = {<CheckoutPage/>}/>
+
+        
+
+
 
 
 
