@@ -277,8 +277,12 @@ const navigate = useNavigate();
 
           {/* Buttons */}
           <div className="mt-4 flex space-x-4">
-            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-              Checkout ({cartItems.length} Items)
+            <button
+            onClick={()=>{
+              navigate('/sell_mode/checkout')
+            }}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+              Checkout {cartItems.length} Items &rarr;
             </button>
             <button
               className="bg-green-500 text-white px-2 py-2 rounded hover:bg-green-600"

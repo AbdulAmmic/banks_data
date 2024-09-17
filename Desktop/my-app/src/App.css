@@ -16,6 +16,22 @@
   }
 }
 
+/* Add this to your global CSS file or a specific print stylesheet */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .receipt, .receipt * {
+    visibility: visible;
+  }
+  .receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

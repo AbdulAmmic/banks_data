@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { AiOutlineSearch, AiOutlineShop, AiOutlineQrcode, AiOutlineAppstore, AiOutlineReload } from "react-icons/ai";
 import QrScanner from "react-qr-scanner";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   pendingCount: number;
@@ -14,10 +15,11 @@ const Header: React.FC<HeaderProps> = ({ pendingCount, onSearchChange, onNewInve
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
 
-  const handleScan = (data: string | null) => {
+  const handleScan = (data: any) => {
     if (data) {
       setScanResult(data);
-      setIsScanning(false); // Close the scanner when a QR code is scanned
+      // setIsScanning(false);
+      console.log(data?.text);
     }
   };
 
@@ -30,6 +32,7 @@ const Header: React.FC<HeaderProps> = ({ pendingCount, onSearchChange, onNewInve
     setSearchQuery(value);
     onSearchChange(value);
   };
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -59,10 +62,10 @@ const Header: React.FC<HeaderProps> = ({ pendingCount, onSearchChange, onNewInve
           {/* New Inventory Button */}
           <button
             className="flex items-center space-x-2 text-white hover:bg-green-700 bg-green-500 px-3 py-2 rounded"
-            onClick={onNewInventory} // Call the function when clicked
+            onClick={()=>{navigate('/sell_mode')}} // Call the function when clicked
           >
-            <AiOutlineReload size={20} />
-            <span>Refresh Inventory</span>
+            <AiOutlineReload  size={20} />
+            <span>New Inventory</span>
           </button>
 
           {/* Pending Checkouts with notification */}
